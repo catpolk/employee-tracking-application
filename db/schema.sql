@@ -1,6 +1,4 @@
-CREATE DATABASE employee_db;
-
--- Create two new databases --
+-- Create new databases --
 DROP DATABASE IF EXISTS employee_db;
 CREATE DATABASE employee_db;
 
@@ -13,26 +11,28 @@ SELECT DATABASE();
 -- Creates the table "produce" within inventory_db --
 CREATE TABLE all_departments (
   -- Creates a numeric column called "id" which will automatically increment its default value as we create new rows --
-  id INT NOT NULL,
+  id INT NOT NULL PRIMARY KEY,
   -- Makes a string column called "name" which cannot contain null --
   department_name VARCHAR(100) NOT NULL
 );
 
 -- Add all roles table --
 CREATE TABLE all_roles (
+    id INT PRIMARY KEY,
     job_title VARCHAR(100) NOT NULL, 
-    role_id INT NOT NULL,
-    department_name VARCHAR(100) NOT NULL, 
+    department_id INT,
+    FOREIGN KEY(department_id) REFERENCES all_departments(id),
     salary decimal(8,2) DEFAULT NULL
 );
 
 -- Add all employee table --
 CREATE TABLE all_employee (
+    id INT PRIMARY KEY,
     role_id INT NOT NULL,
+    FOREIGN KEY(role_id) REFERENCES all_roles(id),
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
-    job_title VARCHAR(100) NOT NULL,
-    department_name VARCHAR(100) NOT NULL,
-    salary decimal(8,2) DEFAULT NULL,
-    manager VARCHAR(100) NOT NULL
+    manager_id INT,
+    FOREIGN KEY(manager_id) REFERENCES all_employee(id)
 );
+
