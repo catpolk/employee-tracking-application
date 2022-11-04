@@ -30,6 +30,26 @@ function menu() {
                 {
                     name: 'View All Employees',
                     value: 'viewEmployees'
+                },
+                {
+                    name: 'Add employee',
+                    value: 'addAmployee'
+                },
+                {
+                    name: 'Update Employee Role',
+                    value: 'updateEmployeeRole'
+                },
+                {
+                    name: 'View All Roles',
+                    value: 'viewAllRoles'
+                },
+                {
+                    name: 'Add Role',
+                    value: 'addRole'
+                },
+                {
+                    name: 'View All Departments',
+                    value: 'Add Department'
                 }
             ],
           },
