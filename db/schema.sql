@@ -25,10 +25,9 @@ CREATE TABLE all_roles (
     salary decimal(8,2) DEFAULT NULL
 );
 
--- Add all employee table --
-CREATE TABLE all_employee (
+-- Add all employees table --
+CREATE TABLE all_employees (
     id INT PRIMARY KEY,
-    role_id INT NOT NULL,
     FOREIGN KEY(role_id) REFERENCES all_roles(id),
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
