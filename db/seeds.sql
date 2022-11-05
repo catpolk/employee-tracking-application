@@ -31,4 +31,18 @@ VALUES (1, "John", "Doe", NULL, 1),
 SELECT * FROM employees;
 
 
+SELECT employees.id, first_name, last_name, job_title AS title FROM employees INNER JOIN roles ON employees.role_id=roles.id;
 
+
+SELECT 
+    employees.id, 
+    employees.first_name, 
+    employees.last_name, 
+    job_title AS title,
+    department_name AS department, 
+    salary,
+    CONCAT(managers.first_name, ' ', managers.last_name) AS manager
+FROM employees 
+INNER JOIN roles ON employees.role_id=roles.id 
+INNER JOIN departments ON departments.id=roles.department_id
+LEFT JOIN employees AS managers ON employees.manager_id=managers.id;

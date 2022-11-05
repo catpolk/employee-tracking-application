@@ -54,10 +54,12 @@ function menu() {
             ],
           },
     ]).then(response => {
-
+        console.log(response);
     })
 
 }
+
+menu();
 
 //user selects view employee, then call a function that would make a quory to mysql to the right table. 
 
