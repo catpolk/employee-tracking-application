@@ -1,24 +1,34 @@
-INSERT INTO all_departments (id, department_name)
+INSERT INTO departments (id, department_name)
 VALUES (1, "Sales"),
        (2, "Engineering"),
        (3, "Finance"),
        (4, "Sales");
 
-SELECT * FROM all_departments;
+SELECT * FROM departments;
 
-INSERT INTO all_roles (id, job_title, department_id, salary)
-VALUES (1, "Sales Lead", "Sales", 100000),
-       (2, "Salesperson", "Sales", 80000),
-       (3, "Lead Engineer", "Engineering", 150000),
-       (4, "Software Engineer","Engineering", 120000),
-       (5, "Account Manager", "Finance", 160000),
-       (6, "Accountant", "Finance", 125000),
-       (7, "Legal Team Lead", "Legal", 250000),
-       (8, "Lawyer", "Legal", 190000);
+INSERT INTO roles (id, job_title, department_id, salary)
+VALUES (1, "Sales Lead", 1, 100000),
+       (2, "Salesperson", 1, 80000),
+       (3, "Lead Engineer", 2, 150000),
+       (4, "Software Engineer",2, 120000),
+       (5, "Account Manager", 3, 160000),
+       (6, "Accountant", 3, 125000),
+       (7, "Legal Team Lead", 4, 250000),
+       (8, "Lawyer", 4, 190000);
 
-SELECT * FROM all_roles;
+SELECT * FROM roles;
 
-INSERT INTO all_employees (id, first_name, last_name)
+INSERT INTO employees (id, first_name, last_name, manager_id, role_id)
+VALUES (1, "John", "Doe", NULL, 1),
+       (2, "Mike", "Chan", 1, 2),
+       (3, "Ashley", "Rodriguez", NULL, 3),
+       (4, "Kevin", "Tupik", 3, 4),
+       (5, "Kunal", "Singh", NULL, 5),
+       (6, "Malia", "Brown", 5, 6),
+       (7, "Sarah", "Lourd", NULL, 7), 
+       (8, "Tom", "Allen", 7, 8);
+
+SELECT * FROM employees;
 
 
 

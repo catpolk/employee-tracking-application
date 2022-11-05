@@ -9,7 +9,7 @@ USE employee_db;
 SELECT DATABASE();
 
 -- Creates the table "produce" within inventory_db --
-CREATE TABLE all_departments (
+CREATE TABLE departments (
   -- Creates a numeric column called "id" which will automatically increment its default value as we create new rows --
   id INT NOT NULL PRIMARY KEY,
   -- Makes a string column called "name" which cannot contain null --
@@ -17,21 +17,22 @@ CREATE TABLE all_departments (
 );
 
 -- Add all roles table --
-CREATE TABLE all_roles (
+CREATE TABLE roles (
     id INT PRIMARY KEY,
     job_title VARCHAR(100) NOT NULL, 
     department_id INT,
-    FOREIGN KEY(department_id) REFERENCES all_departments(id),
+    FOREIGN KEY(department_id) REFERENCES departments(id),
     salary decimal(8,2) DEFAULT NULL
 );
 
 -- Add all employees table --
-CREATE TABLE all_employees (
+CREATE TABLE employees (
     id INT PRIMARY KEY,
-    FOREIGN KEY(role_id) REFERENCES all_roles(id),
+    role_id INT NOT NULL,
+    FOREIGN KEY(role_id) REFERENCES roles(id),
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     manager_id INT,
-    FOREIGN KEY(manager_id) REFERENCES all_employee(id)
+    FOREIGN KEY(manager_id) REFERENCES employees(id)
 );
 
