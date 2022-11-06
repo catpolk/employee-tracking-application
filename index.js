@@ -17,23 +17,43 @@ const db = mysql.createConnection(
   
   // Query database
 
-function getDepartmentsQuery(){
-  return 'SELECT * FROM departments;';
+async function getDepartmentsQuery(){
+  return await db.promise().query('SELECT * FROM departments;').then(([rows, flds]) => { 
+    console.log(rows); 
+    // console.log(flds);
+  }); 
 }
 
-function getEmployeesQuery(){
-  return 'SELECT * FROM employees;';
+async function getEmployeesQuery(){
+  return await db.promise().query('SELECT * FROM employees;').then(([rows,flds]) => {
+    console.log(rows);
+  });
 }
 
-function getRolesQuery(){
-  return 'SELECT * FROM roles;';
+async function getRolesQuery(){
+  return await db.promise().query('SELECT * FROM roles;').then(([rows,flds]) => {
+    console.log(rows);
+  });
 }
 
+function addDepartment(){
+  return inquirer.prompt({
+    name: 'departmentName', 
+    message: 'What is the name of the department?'
+  });
+}
 
+// function addNewRole(){
+//   return inquirer.prompt({
+//     type: 'list',
+//     message: 'What is the name of the role?',
+//     name: 'addRole'
+//   })
+// }
 
   
 function menu() {
-  return  inquirer.prompt({
+  return inquirer.prompt({
       type: 'list',
       message: 'What would you like to do?',
       name: 'mainMenu',
@@ -49,27 +69,30 @@ function menu() {
       ]
     }).then(async response => {
       console.log(response);
-      let query;
+      // let query;
 
       switch(response.mainMenu){
         case "viewAllDepartments": 
-          query = getDepartmentsQuery();
+          await getDepartmentsQuery();
           break;
         case "viewEmployees":
-          query = getEmployeesQuery();
+          await getEmployeesQuery();
           break;
         case "viewAllRoles":
-          query = getRolesQuery();
+          await getRolesQuery();
+          break;
+        case "addDepartment":
+          await addDepartment();
           break;
         case 'quit':
           db.end();
           return;
       }
 
-      await db.promise().query(query).then(([rows, flds]) => { 
-        console.log(rows); 
-        // console.log(flds);
-      });
+      // await db.promise().query(query).then(([rows, flds]) => { 
+      //   console.log(rows); 
+      //   // console.log(flds);
+      // });
       
       return menu();
     })
