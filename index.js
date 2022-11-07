@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 // Import and require mysql2
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 // Connect to database
 const db = mysql.createConnection(
@@ -15,33 +16,71 @@ const db = mysql.createConnection(
   console.log(`Connected to the employee_db database.`)
 );
   
-  // Query database
-
-async function getDepartmentsQuery(){
-  return await db.promise().query('SELECT * FROM departments;').then(([rows, flds]) => { 
-    console.log(rows); 
-    // console.log(flds);
-  }); 
+  // using db.query to select departments table 
+async function getDepartments(callbackFunction){
+  return await db.promise().query('SELECT id, department_name AS department FROM departments;').then(callbackFunction); 
+}
+  // using db.query to select employees table
+async function getEmployees(callbackFunction){
+  return await db.promise().query("SELECT employees.id, employees.first_name, employees.last_name, job_title AS title, department_name AS department, salary, CONCAT(managers.first_name, ' ' , managers.last_name) AS manager FROM employees INNER JOIN roles ON employees.role_id=roles.id INNER JOIN departments ON departments.id=roles.department_id LEFT JOIN employees AS managers ON employees.manager_id=managers.id;").then(callbackFunction);
 }
 
-async function getEmployeesQuery(){
-  return await db.promise().query('SELECT * FROM employees;').then(([rows,flds]) => {
-    console.log(rows);
-  });
+ // using db.query to select roles table
+async function getRoles(callbackFunction){
+  return await db.promise().query("\
+    SELECT roles.id, roles.job_title, roles.salary, departments.department_name FROM roles \
+    JOIN departments ON departments.id=roles.department_id ORDER BY id ASC;").then(callbackFunction);
 }
 
-async function getRolesQuery(){
-  return await db.promise().query('SELECT * FROM roles;').then(([rows,flds]) => {
-    console.log(rows);
-  });
+const printTable = ([rows, fields]) => {
+  console.table(rows);
 }
-
-function addDepartment(){
-  return inquirer.prompt({
+ 
+//selects a table and inserts user's input into the table 
+async function addDepartment(){
+  await inquirer.prompt({
     name: 'departmentName', 
     message: 'What is the name of the department?'
-  });
+  }).then(async response => {
+    db.query(`INSERT INTO departments (department_name) VALUES ('${response.departmentName}')`);
+  })
+    
+  console.log('Added new department');
+  return;
 }
+
+async function addRole(){
+  let choices;
+
+  await db.promise().query('SELECT id AS value, department_name as name FROM departments;').then(([rows, flds]) => { 
+    choices = rows;
+  }); 
+
+  await inquirer.prompt([
+    { name: 'roleName', message: 'What is the name of the new role?' },
+    { type: 'number', name: 'salary', message: 'What is the salary of the new role?' }, 
+    {
+      type: 'list',
+      name: 'department_id',
+      message: 'Which department does the role belong to?',
+      choices: choices
+    }
+  ]).then(async response => {
+    db.query(`INSERT INTO roles (job_title, salary, department_id) VALUES ('${response.roleName}', '${response.salary}', '${response.department_id}')`);
+  })
+
+  console.log('Added new role');
+  return;
+}
+
+async function addEmployee(){
+
+  await db.promise().query()
+}
+
+
+
+
 
 // function addNewRole(){
 //   return inquirer.prompt({
@@ -73,16 +112,19 @@ function menu() {
 
       switch(response.mainMenu){
         case "viewAllDepartments": 
-          await getDepartmentsQuery();
+          await getDepartments(printTable);
           break;
         case "viewEmployees":
-          await getEmployeesQuery();
+          await getEmployees(printTable);
           break;
         case "viewAllRoles":
-          await getRolesQuery();
+          await getRoles(printTable);
           break;
         case "addDepartment":
           await addDepartment();
+          break;
+        case 'addRole':
+          await addRole();
           break;
         case 'quit':
           db.end();
