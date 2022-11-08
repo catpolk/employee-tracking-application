@@ -49,10 +49,11 @@ async function addDepartment(){
   return;
 }
 
+//function that adds roles 
 async function addRole(){
   let choices;
 
-  await db.promise().query('SELECT id AS value, department_name as name FROM departments;').then(([rows, flds]) => { 
+  await db.promise().query('SELECT id AS value, department_name AS name FROM departments;').then(([rows, flds]) => { 
     choices = rows;
   }); 
 
@@ -72,25 +73,44 @@ async function addRole(){
   console.log('Added new role');
   return;
 }
-
+//function that adds an employee
 async function addEmployee(){
+  let choicesRole;
+  let choicesManager;
 
-  await db.promise().query()
+  await db.promise().query('SELECT id AS value, job_title AS name FROM roles;').then(([rows, flds]) => {
+    choicesRole = rows;
+  });
+  await db.promise().query("SELECT id AS value, CONCAT(first_name, ' ', last_name) AS name FROM employees;").then(([rows, flds]) => {
+    choicesManager = rows;
+  });
+
+  await inquirer.prompt([ 
+    { name: 'first_name', message: "What is the new employee's first name?"},
+    { name: 'last_name', message: "What is the employee's last name?"},
+    { 
+      type: 'list',
+      name: 'role_id', 
+      message: "What is the employee's role?",
+      choices: choicesRole
+    },
+    {
+      type: 'list',
+      name: 'manager_id',
+      message: "Who is the employee's manager?",
+      choices: [{name: 'None', value: null }, ...choicesManager]
+    }
+
+  ]).then(async response => {
+    //inserts data entered by a user.
+    db.query(`INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES ('${response.first_name}', '${response.last_name}', ${response.role_id}, ${response.manager_id})`);
+  })
+  //prints if the data is entered into the db 
+  console.log('Added a new employee');
+  return;
 }
 
-
-
-
-
-// function addNewRole(){
-//   return inquirer.prompt({
-//     type: 'list',
-//     message: 'What is the name of the role?',
-//     name: 'addRole'
-//   })
-// }
-
-  
+  //main menu of the questions that asked in the command line.
 function menu() {
   return inquirer.prompt({
       type: 'list',
@@ -98,7 +118,7 @@ function menu() {
       name: 'mainMenu',
       choices: [
         { name: 'View All Employees', value: 'viewEmployees' },
-        { name: 'Add employee', value: 'addAmployee' },
+        { name: 'Add employee', value: 'addEmployee' },
         { name: 'Update Employee Role', value: 'updateEmployeeRole' },
         { name: 'View All Roles', value: 'viewAllRoles' },
         { name: 'Add Role', value: 'addRole' },
@@ -108,8 +128,8 @@ function menu() {
       ]
     }).then(async response => {
       console.log(response);
-      // let query;
-
+      
+      //switch statement that takes all the functions to execute the application
       switch(response.mainMenu){
         case "viewAllDepartments": 
           await getDepartments(printTable);
@@ -126,15 +146,13 @@ function menu() {
         case 'addRole':
           await addRole();
           break;
+        case 'addEmployee':
+          await addEmployee();
+          break;
         case 'quit':
           db.end();
           return;
       }
-
-      // await db.promise().query(query).then(([rows, flds]) => { 
-      //   console.log(rows); 
-      //   // console.log(flds);
-      // });
       
       return menu();
     })
@@ -142,10 +160,6 @@ function menu() {
 
 menu();
 
-// getDepartments();
-
-// db.end();
-//user selects view employee, then call a function that would make a quory to mysql to the right table. 
 
 
 
