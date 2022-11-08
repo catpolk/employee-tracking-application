@@ -10,4 +10,7 @@
 
 - I learned a lot about databases. 
 
+![screenshot](./Untitled.png)
+
+Github link: https://github.com/catpolk/employee-tracking-application-
 
